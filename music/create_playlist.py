@@ -1,18 +1,67 @@
 import argparse
+import os
 
 MUSIC_EXTENSIONS = [
-    "mp3",
+    "flac",
+    "it",
     "m4a",
+    "mid",
+    "mod",
+    "mp3",
+    "mtm",
+    "opus",
+    "pdf",
+    "png",
+    "prg",
+    "s3m",
+    "sf2",
+    "sng",
+    "wav",
+    "xm",
 ]
 
 IGNORED_EXTENSIONS = [
+    "669",
+    "bat",
+    "bbs",
+    "dat",
+    "dmf",
+    "ds_store",
+    "epub",
+    "far",
+    "html",
+    "ini",
+    "ins",
+    "ion",
+    "jpeg",
+    "jpg",
     "m3u",
+    "mobi",
+    "nfo",
+    "prg",
+    "txt",
+    "ult",
 ]
 
 
-def list_extensions(path: str):
+def list_extensions(path: str) -> list[str]:
     """This function crawls given path recursely and creates unique list of extensions."""
     print(f"Crawling path '{path}' files...")
+
+    def _list_extensions(p: str) -> list[str]:
+        _extensions = []
+        dir_contents = os.listdir(p)
+        for element in dir_contents:
+            if os.path.isdir(os.path.join(p, element)):
+                _extensions += _list_extensions(os.path.join(p, element))
+            else:
+                ex = element.split(".")[-1].lower()
+                if ex not in IGNORED_EXTENSIONS:
+                    _extensions.append(ex)
+        return _extensions
+
+    _list_extensions = set(_list_extensions(path))
+    return sorted(_list_extensions)
 
 
 def main():
@@ -36,7 +85,12 @@ def main():
     parser.parse_args()
     args = parser.parse_args()
     if args.list_extensions:
-        list_extensions(args.path)
+        extensions = list_extensions(args.path)
+        print(f"List of extensions in '{args.path}':")
+        print("MUSIC_EXTENSIONS = [")
+        for _ex in extensions:
+            print(f'    "{_ex}",')
+        print("]")
 
 
 if __name__ == "__main__":
