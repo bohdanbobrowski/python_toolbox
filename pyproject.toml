@@ -18,7 +18,7 @@ maintainers = [
   {name="Bohdan Bobrowski", email="bohdanbobrowski@gmail.com"}
 ]
 dependencies = [
-    "pydantic",
+    "progress>=1.6.0",
 ]
 
 [project.optional-dependencies]
@@ -30,10 +30,14 @@ dev = [
 ]
 
 [project.scripts]
+create_playlist = "music.create_playlist:main"
 move_not_starred = "pictures.move_not_starred:main"
 
 [tool.setuptools]
-packages = ["chmura"]
+packages = [
+    "music",
+    "pictures"
+]
 
 [tool.ruff.lint]
 select = ["E", "F", "UP", "B", "I"]
