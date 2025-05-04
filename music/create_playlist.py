@@ -43,8 +43,24 @@ IGNORED_EXTENSIONS = [
 ]
 
 
-def create_playlist(path: str, recursive: bool):
-    pass
+def create_playlist(path: str, recursive: bool, overwrite: bool):
+    playlist_name = "_index.m3u"
+    playlist = []
+    dir_contents = os.listdir(path)
+    for element in dir_contents:
+        if recursive and os.path.isdir(os.path.join(path, element)):
+            create_playlist(os.path.join(path, element), recursive, overwrite)
+        if os.path.isfile(os.path.join(path, element)):
+            extension = os.path.splitext(element)[1].lower()[1:]
+            if extension in MUSIC_EXTENSIONS:
+                playlist.append(element)
+    if not os.path.isfile(os.path.join(path, playlist_name)) or overwrite:
+        if len(playlist) > 0:
+            print(f"Creating {playlist_name} playlist with {len(playlist)} elements in {path}")
+            with open(os.path.join(path, playlist_name), "w", encoding="utf-8") as f:
+                f.write("\n".join(playlist))
+        else:
+            print(f"No music files found in {path}")
 
 
 def list_extensions(path: str, recursive: bool) -> list[str]:
@@ -101,7 +117,7 @@ def main():
             print(f'    "{_ex}",')
         print("]")
     else:
-        pass
+        create_playlist(args.path, args.recursive, args.overwrite)
 
 
 if __name__ == "__main__":
