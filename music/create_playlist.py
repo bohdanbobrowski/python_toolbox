@@ -27,6 +27,12 @@ def main():
         action="store_true",
         help="This function crawls given path recursely and creates unique list of extensions.",
     )
+    parser.add_argument(
+        "-o",
+        "--overwrite",
+        action="store_true",
+        help="Always overwrite existing playlist.",
+    )
     parser.parse_args()
     args = parser.parse_args()
     if args.list_extensions:
