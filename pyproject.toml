@@ -9,8 +9,8 @@ name = "python_toolbox"
 version = "0.1"
 description = "My python toolbox"
 readme = "README.md"
-requires-python = ">=3.0"
-keywords = ["Szkoła w Chmurze", "xlsx"]
+requires-python = ">=3.12"
+keywords = [""]
 authors = [
   {name="Bohdan Bobrowski", email="bohdanbobrowski@gmail.com"},
 ]
@@ -30,9 +30,7 @@ dev = [
 ]
 
 [project.scripts]
-chmura_salami = "chmura.salami:main"
-chmura_osoby = "chmura.osoby:main"
-chmura_nauczyciele = "chmura.nauczyciele:main"
+move_not_starred = "pictures.move_not_starred:main"
 
 [tool.setuptools]
 packages = ["chmura"]
