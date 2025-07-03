@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "python_toolbox"
-version = "0.1"
+version = "0.2"
 description = "My python toolbox"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -31,6 +31,7 @@ dev = [
 
 [project.scripts]
 create_playlist = "music.create_playlist:main"
+exiftool_csv = "pictures.exiftool_csv:main"
 move_not_starred = "pictures.move_not_starred:main"
 
 [tool.setuptools]
