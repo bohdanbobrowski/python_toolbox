@@ -3,7 +3,7 @@ This is my python toolbox.
 
 ## Installation
 
-    pip install git+https://github.com/bohdanbobrowski/python_toolbox
+    pip install git+https://github.com/bohdanbobrowski/python_toolbox.git
 
 #### Local (dev) environment
 
@@ -38,7 +38,7 @@ This is my python toolbox.
     options:
       -h, --help        show this help message and exit
       -d, --dry-run     Dry run.
-      -c, --create-csv  Create csv template for given folder.
+      -c, --create      Create csv template for given folder.
       -s, --save        Save csv.
 
 #### [move_not_starred](pictures/move_not_starred.py)

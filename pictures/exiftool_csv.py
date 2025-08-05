@@ -24,25 +24,24 @@ def exiftool_csv_save(save: bool = True):
         cnt = 0
         for source_file in data.get("SourceFile"):
             if os.path.isfile(source_file):
-                command = ["exiftool"]
+                command = ["exiftool", "-charset UTF8", "-m", "-overwrite_original"]
                 for key in data.keys():
                     try:
                         if key not in ["", "SourceFile"] and data[key][cnt]:
-                            # value = f"\"{data[key][cnt]}\""
-                            value = data[key][cnt]
-                            if key.find("Serial") < 0:
-                                try:
-                                    value = int(data[key][cnt])
-                                except ValueError:
-                                    pass
+                            value = data[key][cnt].strip()
                             if value:
-                                command.append(f"-{key}={value}")
+                                # command.append(f'"-{key}={value}"')
+                                command.append(f'-{key}="{value}"')
+                                if key == "Title":
+                                    iptc_object_name = value[:64]
+                                    # command.append(f'"-iptc:ObjectName={iptc_object_name}"')
+                                    command.append(f'-iptc:ObjectName="{iptc_object_name}"')
                     except IndexError:
                         pass
                 command.append(source_file)
                 print(" ".join(command))
                 if save:
-                    subprocess.run(command)
+                    subprocess.run(" ".join(command))
             cnt += 1
 
 
@@ -66,6 +65,8 @@ def exiftool_csv_create():
         "LensSerialNumber",
         "FocalLength",
         "ISO",
+        "gpslongitude",
+        "gpslatitude",
     ]
     file_content = ",".join(columns) + "\n"
     if not os.path.isfile("exiftool.csv"):
@@ -94,7 +95,7 @@ def main():
     )
     parser.add_argument(
         "-c",
-        "--create-csv",
+        "--create",
         action="store_true",
         help="Create csv template for given folder.",
     )
@@ -111,7 +112,7 @@ def main():
         sys.exit(1)
     if args.dry_run:
         exiftool_csv_save(save=False)
-    elif args.create_csv:
+    elif args.create:
         exiftool_csv_create()
     elif args.save:
         exiftool_csv_save()
