@@ -67,6 +67,8 @@ def exiftool_csv_create():
         "ISO",
         "gpslongitude",
         "gpslatitude",
+        "XMP:GPSLatitude",
+        "XMP:GPSLongitude",
     ]
     file_content = ",".join(columns) + "\n"
     if not os.path.isfile("exiftool.csv"):
