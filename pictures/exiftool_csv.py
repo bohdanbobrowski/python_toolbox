@@ -9,7 +9,7 @@ def exiftool_csv_save(save: bool = True):
     if not save:
         print("DRY RUN!")
     data = {}
-    with open("exiftool.csv") as f:
+    with open("exiftool.csv", encoding="utf8") as f:
         for line in f:
             line = line.split(",")
             if not data:
@@ -118,3 +118,6 @@ def main():
         exiftool_csv_create()
     elif args.save:
         exiftool_csv_save()
+
+if __name__ == "__main__":
+    main()
