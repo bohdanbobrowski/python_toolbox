@@ -41,7 +41,7 @@ def exiftool_csv_save(save: bool = True):
                 command.append(source_file)
                 print(" ".join(command))
                 if save:
-                    subprocess.run(" ".join(command))
+                    subprocess.run(command)
             cnt += 1
 
 
