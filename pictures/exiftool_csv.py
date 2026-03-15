@@ -27,18 +27,25 @@ def exiftool_csv_save(save: bool = True):
         cnt = 0
         for source_file in data.get("SourceFile"):
             if os.path.isfile(source_file):
-                command = ["exiftool", "-charset UTF8", "-m", "-overwrite_original"]
+                command = [
+                    "exiftool",
+                    "-charset utf8",
+                    "-m",
+                    "-overwrite_original",
+                ]
                 for key in data.keys():
                     try:
                         if key not in ["", "SourceFile"] and data[key][cnt]:
                             value = data[key][cnt].strip()
                             if value:
-                                # command.append(f'"-{key}={value}"')
-                                command.append(f'-{key}="{value}"')
-                                if key == "Title":
-                                    iptc_object_name = value[:64]
-                                    # command.append(f'"-iptc:ObjectName={iptc_object_name}"')
-                                    command.append(f'-iptc:ObjectName="{iptc_object_name}"')
+                                if key in ["FocalLength","ISO"]:
+                                    command.append(f'-{key}={int(value)}')
+                                else:
+                                    command.append(f'-{key}="{value}"')
+                                    if key == "Title":
+                                        iptc_object_name = value[:64]
+                                        # command.append(f'"-iptc:ObjectName={iptc_object_name}"')
+                                        command.append(f'-iptc:ObjectName="{iptc_object_name}"')
                     except IndexError:
                         pass
                 command.append(source_file)
@@ -121,6 +128,7 @@ def main():
         exiftool_csv_create()
     elif args.save:
         exiftool_csv_save()
+
 
 if __name__ == "__main__":
     main()
