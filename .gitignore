@@ -1,3 +1,7 @@
+venv
 *.jpg
 *.jpg_original
 *.csv
+*.egg-info
+.idea
+__pycache__
