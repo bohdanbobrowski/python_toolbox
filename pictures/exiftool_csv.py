@@ -18,7 +18,10 @@ def exiftool_csv_save(save: bool = True):
             else:
                 cnt = 0
                 for key in data.keys():
-                    data[key].append(line[cnt].strip())
+                    try:
+                        data[key].append(line[cnt].strip())
+                    except IndexError:
+                        pass
                     cnt += 1
     if data.get("SourceFile"):
         cnt = 0
@@ -65,8 +68,8 @@ def exiftool_csv_create():
         "LensSerialNumber",
         "FocalLength",
         "ISO",
-        "gpslongitude",
         "gpslatitude",
+        "gpslongitude",
         "XMP:GPSLatitude",
         "XMP:GPSLongitude",
     ]
