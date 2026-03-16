@@ -9,6 +9,14 @@ This is my python toolbox.
 
     pip install -e .
 
+## Building
+
+    pip install pyinstaller
+
+    pyinstaller create_playlist.spec
+    pyinstaller exiftool_csv.spec
+    pyinstaller move_not_starred.spec
+
 ## Included scripts
 
 ### Music

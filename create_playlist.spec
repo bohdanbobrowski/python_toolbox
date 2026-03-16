@@ -21,7 +21,6 @@ exe = EXE(
     a.scripts,
     a.binaries,
     a.datas,
-    [],
     name='create_playlist',
     debug=False,
     bootloader_ignore_signals=False,
