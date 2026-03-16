@@ -33,22 +33,41 @@ def exiftool_csv_save(save: bool = True):
                     "-m",
                     "-overwrite_original",
                 ]
+                lat = None
+                lng = None
                 for key in data.keys():
                     try:
                         if key not in ["", "SourceFile"] and data[key][cnt]:
                             value = data[key][cnt].strip()
                             if value:
-                                if key in ["FocalLength","ISO"]:
-                                    command.append(f'-{key}={int(value)}')
+                                if key in ["FocalLength", "ISO"]:
+                                    try:
+                                        command.append(f"-{key}={int(value)}")
+                                    except ValueError:
+                                        pass
+                                elif key in ["latitude", "gpslatitude", "XMP:GPSLatitude"]:
+                                    try:
+                                        lat = float(value)
+                                    except ValueError:
+                                        pass
+                                elif key in ["longitude", "gpslongitude", "XMP:GPSLongitude"]:
+                                    try:
+                                        lng = float(value)
+                                    except ValueError:
+                                        pass
                                 else:
                                     command.append(f'-{key}="{value}"')
                                     if key == "Title":
                                         iptc_object_name = value[:64]
-                                        # command.append(f'"-iptc:ObjectName={iptc_object_name}"')
                                         command.append(f'-iptc:ObjectName="{iptc_object_name}"')
                     except IndexError:
                         pass
                 command.append(source_file)
+                if lat and lng:
+                    command.append(
+                        f'-XMP:GPSLongitude="{lng}"  -XMP:GPSLatitude="{lat}"  -GPSLongitudeRef="East" -GPSLatitudeRef="North"'
+                    )
+
                 print(" ".join(command))
                 if save:
                     subprocess.run(command)
@@ -75,10 +94,8 @@ def exiftool_csv_create():
         "LensSerialNumber",
         "FocalLength",
         "ISO",
-        "gpslatitude",
-        "gpslongitude",
-        "XMP:GPSLatitude",
-        "XMP:GPSLongitude",
+        "latitude",
+        "longitude",
     ]
     file_content = ",".join(columns) + "\n"
     if not os.path.isfile("exiftool.csv"):
