@@ -1,4 +1,6 @@
 import argparse
+import csv
+import math
 import os
 import subprocess
 import sys
@@ -8,41 +10,29 @@ from fnmatch import filter
 def exiftool_csv_save(save: bool = True):
     if not save:
         print("DRY RUN!")
-    data = {}
-    with open("exiftool.csv", encoding="utf8") as f:
-        for line in f:
-            line = line.split(",")
-            if not data:
-                for key in line:
-                    data[key.strip()] = []
-            else:
-                cnt = 0
-                for key in data.keys():
-                    try:
-                        data[key].append(line[cnt].strip())
-                    except IndexError:
-                        pass
-                    cnt += 1
-    if data.get("SourceFile"):
-        cnt = 0
-        for source_file in data.get("SourceFile"):
-            if os.path.isfile(source_file):
+    data: list[dict[str, str]] = []
+    with open("exiftool.csv", newline="", encoding="utf8") as csvfile:
+        csv_reader = csv.DictReader(csvfile, delimiter=",", quotechar='"')
+        for row in csv_reader:
+            cnt = 0
+            if os.path.isfile(row.get("SourceFile")):
                 command = [
                     "exiftool",
-                    "-charset utf8",
+                    # "-codedcharacterset=utf8", # TODO: fix title/object name encoding!
                     "-m",
                     "-overwrite_original",
                 ]
                 lat = None
                 lng = None
-                for key in data.keys():
+                for key in row.keys():
                     try:
-                        if key not in ["", "SourceFile"] and data[key][cnt]:
-                            value = data[key][cnt].strip()
+                        if key not in ["", "SourceFile"]:
+                            value = row[key].strip()
                             if value:
                                 if key == "Title":
                                     iptc_object_name = value[:64]
                                     command.append(f'-iptc:ObjectName="{iptc_object_name}"')
+                                    command.append(f'-iptc:CodedCharacterSet=UTF8')
                                 elif key in ["FocalLength", "ISO"]:
                                     try:
                                         command.append(f"-{key}={int(value)}")
@@ -51,11 +41,15 @@ def exiftool_csv_save(save: bool = True):
                                 elif key in ["latitude", "gpslatitude", "XMP:GPSLatitude"]:
                                     try:
                                         lat = float(value)
+                                        ff = 10 ** 5
+                                        lat = math.ceil(lat * ff) / ff
                                     except ValueError:
                                         pass
                                 elif key in ["longitude", "gpslongitude", "XMP:GPSLongitude"]:
                                     try:
                                         lng = float(value)
+                                        ff = 10 ** 6
+                                        lng = math.ceil(lng * ff) / ff
                                     except ValueError:
                                         pass
                                 else:
@@ -63,17 +57,19 @@ def exiftool_csv_save(save: bool = True):
                     except IndexError:
                         pass
 
-                if lat and lng:
-                    command.append(
-                        f'-GPSLongitude="{lng}"  -GPSLatitude="{lat}"  -GPSLongitudeRef="East" -GPSLatitudeRef="North"'
-                    )
+                    # TODO: This is broken, so FIX IT!
+                    # if lat and lng:
+                    #     command.append(
+                    #         f'-GPSLongitude={lng} -GPSLongitudeRef={lng} -GPSLatitude={lat} -GPSLatitudeRef={lat}'
+                    #     )
 
-                command.append(source_file)
+                command.append(row.get("SourceFile"))
 
                 print(" ".join(command))
                 if save:
                     subprocess.run(command)
-            cnt += 1
+
+                cnt += 1
 
 
 def _get_files():
@@ -96,8 +92,8 @@ def exiftool_csv_create():
         "LensSerialNumber",
         "FocalLength",
         "ISO",
-        "latitude",
-        "longitude",
+        # "latitude",
+        # "longitude",
     ]
     file_content = ",".join(columns) + "\n"
     if not os.path.isfile("exiftool.csv"):
