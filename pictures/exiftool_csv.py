@@ -62,11 +62,13 @@ def exiftool_csv_save(save: bool = True):
                                         command.append(f'-iptc:ObjectName="{iptc_object_name}"')
                     except IndexError:
                         pass
-                command.append(source_file)
+
                 if lat and lng:
                     command.append(
-                        f'-XMP:GPSLongitude="{lng}"  -XMP:GPSLatitude="{lat}"  -GPSLongitudeRef="East" -GPSLatitudeRef="North"'
+                        f'-GPSLongitude="{lng}"  -GPSLatitude="{lat}"  -GPSLongitudeRef="East" -GPSLatitudeRef="North"'
                     )
+
+                command.append(source_file)
 
                 print(" ".join(command))
                 if save:
