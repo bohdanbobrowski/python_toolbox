@@ -40,7 +40,10 @@ def exiftool_csv_save(save: bool = True):
                         if key not in ["", "SourceFile"] and data[key][cnt]:
                             value = data[key][cnt].strip()
                             if value:
-                                if key in ["FocalLength", "ISO"]:
+                                if key == "Title":
+                                    iptc_object_name = value[:64]
+                                    command.append(f'-iptc:ObjectName="{iptc_object_name}"')
+                                elif key in ["FocalLength", "ISO"]:
                                     try:
                                         command.append(f"-{key}={int(value)}")
                                     except ValueError:
@@ -57,9 +60,6 @@ def exiftool_csv_save(save: bool = True):
                                         pass
                                 else:
                                     command.append(f'-{key}="{value}"')
-                                    if key == "Title":
-                                        iptc_object_name = value[:64]
-                                        command.append(f'-iptc:ObjectName="{iptc_object_name}"')
                     except IndexError:
                         pass
 
