@@ -10,7 +10,6 @@ from fnmatch import filter
 def exiftool_csv_save(save: bool = True):
     if not save:
         print("DRY RUN!")
-    data: list[dict[str, str]] = []
     with open("exiftool.csv", newline="", encoding="utf8") as csvfile:
         csv_reader = csv.DictReader(csvfile, delimiter=",", quotechar='"')
         for row in csv_reader:
@@ -31,8 +30,8 @@ def exiftool_csv_save(save: bool = True):
                             if value:
                                 if key == "Title":
                                     iptc_object_name = value[:64]
-                                    command.append(f'-iptc:ObjectName="{iptc_object_name}"')
-                                    command.append(f'-iptc:CodedCharacterSet=UTF8')
+                                    command.append(f"-iptc:ObjectName={iptc_object_name}")
+                                    command.append("-iptc:CodedCharacterSet=UTF8")
                                 elif key in ["FocalLength", "ISO"]:
                                     try:
                                         command.append(f"-{key}={int(value)}")
@@ -41,19 +40,19 @@ def exiftool_csv_save(save: bool = True):
                                 elif key in ["latitude", "gpslatitude", "XMP:GPSLatitude"]:
                                     try:
                                         lat = float(value)
-                                        ff = 10 ** 5
+                                        ff = 10**5
                                         lat = math.ceil(lat * ff) / ff
                                     except ValueError:
                                         pass
                                 elif key in ["longitude", "gpslongitude", "XMP:GPSLongitude"]:
                                     try:
                                         lng = float(value)
-                                        ff = 10 ** 6
+                                        ff = 10**6
                                         lng = math.ceil(lng * ff) / ff
                                     except ValueError:
                                         pass
                                 else:
-                                    command.append(f'-{key}="{value}"')
+                                    command.append(f"-{key}={value}")
                     except IndexError:
                         pass
 
